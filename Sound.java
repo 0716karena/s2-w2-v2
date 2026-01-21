@@ -226,19 +226,32 @@ public class Sound {
      * reverse the sound
      */
     public void reverse() {
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        for(int i = myData.size()-1; i>=0; i--){
+            temp.add(myData.get(i));
+        }myData = temp;
+        refresh();
 
 
     }
 
     // this throws out half the data
     public void doublePitch() {
-
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        for(int i = 0;i<myData.size()/2; i++){
+            temp.add(myData.get(i*2));
+        }myData = temp;
+        refresh();
     }
 
 
   
     //complete this method
     public void amplify (double amt) {
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        for(int i = 0; i<myData.size();i++){
+            temp.add((int)(myData.get(i)*amt));
+        }
 
     }
 
@@ -268,6 +281,17 @@ public class Sound {
     // - replace the current value with the new value
     // - refresh!
     public void fadeIn(double seconds) {
+        int numToChange = (int)Math.round(this.getSamplingRate()* seconds);
+        if(numToChange>myData.size()){
+            numToChange=myData.size();
+        }
+        double factor = 1.0/numToChange;
+        for(int i=0;i<numToChange;i++){
+            int x =myData.get(i);
+            x*=factor*i;
+            myData.set(i,x);
+            
+        }
 
    
     }
