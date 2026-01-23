@@ -238,9 +238,13 @@ public class Sound {
     // this throws out half the data
     public void doublePitch() {
         ArrayList<Integer> temp = new ArrayList<Integer>();
+        if(myData.size()>1){
         for(int i = 0;i<myData.size()/2; i++){
             temp.add(myData.get(i*2));
-        }myData = temp;
+        }myData = temp;}
+        else{
+            return;
+        }
         refresh();
     }
 
@@ -252,6 +256,8 @@ public class Sound {
         for(int i = 0; i<myData.size();i++){
             temp.add((int)(myData.get(i)*amt));
         }
+        myData = temp;
+        refresh();
 
     }
 
@@ -260,6 +266,14 @@ public class Sound {
      * Used by normalize() to determine the scaling factor.
      */
     private int findAbsoluteMax() {
+        int x=Math.abs(myData.get(0));
+        for(int i=0; i<myData.size();i++){
+            int a = Math.abs(myData.get(i));
+            if(a>x){
+                x=a;
+            }
+
+        }return x;
   
     }
 
@@ -269,6 +283,12 @@ public class Sound {
      * This makes quiet sounds louder while preventing distortion.
      */
     public void normalize() {
+        if(myData.size()>0){
+        amplify(32767/(findAbsoluteMax()*1.0));
+        refresh();}
+        else{
+            return;
+        }
 
 
     }
@@ -292,6 +312,7 @@ public class Sound {
             myData.set(i,x);
             
         }
+        refresh();
 
    
     }
@@ -299,7 +320,21 @@ public class Sound {
 
     // Fade out over a duration in seconds
     public void fadeOut(double seconds) {
+        int numToChange = (int)Math.round(this.getSamplingRate()* seconds);
+        if(numToChange>myData.size()){
+            numToChange=myData.size();
+        }
+                    int b = numToChange;
 
+        double factor = 1.0/numToChange;
+        for(int i=myData.size()-numToChange;i<myData.size();i++){
+            int x =myData.get(i);
+            x*=factor*b;
+            myData.set(i,x);
+            b--;
+            
+        }
+        refresh();
     }
 
 
@@ -313,7 +348,8 @@ public class Sound {
         // cycle - is one complete wave 
         // sampleRate() -- getSamplingRate() - samples per second
         // You need to calculate the samplesPerCycle 
-
+        int samplesPerCycle = (int)Math.round(this.getSamplingRate()/hertz);
+        
     }
 
 
